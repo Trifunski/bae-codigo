@@ -32,7 +32,7 @@
                 if (
                     isset($_POST['id']) &&
                     isset($_POST['nombre']) &&
-                    isset($_POST['texto']) &&
+                    isset($_POST['texto']) && 
                     isset($_POST['categoria'])
 
                 ) {
@@ -94,7 +94,7 @@
 
                     <br>
 
-                    <button type="submit" class="btn btn-primary">Editar Biblioteca</button>
+                    <button type="submit" class="btn btn-primary">Editar Articulo</button>
                 </form>
             </div>
             <br>

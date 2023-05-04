@@ -30,10 +30,14 @@
             $articulo = new Articulo();
             $listaArticulos = $articulo->listarArticulos();
 
+            $tags = ['paisaje', 'urban', 'nature', 'people', 'tech', 'animals', 'interiors', 'architecture', 'experimental', 'fashion', 'food', 'health', 'arts-culture', 'history', 'spirituality', 'business-work', 'abstract', 'textures-patterns', 'animals', 'travel', 'fashion', 'health', 'arts-culture', 'history', 'spirituality', 'business-work', 'abstract', 'textures-patterns'];
+
+            $tagsAleatorios = rand(0, 18);
+
             echo "<div class='container'>";
                 echo "<div class='row'>";
 
-                    $img_url = obtener_imagenes_aleatorias("5059697fcdcc0c11b76398a8fb5f7017","paisaje");
+                    $img_url = obtener_imagenes_aleatorias("5059697fcdcc0c11b76398a8fb5f7017", $tags[$tagsAleatorios]);
 
                     foreach ($listaArticulos as $index => $articulo) {
                             echo "<div class='card m-3' style='width: 18rem;'>";
@@ -44,6 +48,7 @@
                                     echo "<a href='./vista/articulo/editar_articulo.php?id=" . $articulo->getCodArticulo() . "' class='btn btn-primary m-1'><i class='bi bi-pencil-fill'></i></a>";
                                     echo "<a href='./vista/articulo/eliminar_articulo.php?id=" . $articulo->getCodArticulo() . "' class='btn btn-danger m-1'><i class='bi bi-trash-fill'></i></a>";
                                     echo "<a href='#' class='btn btn-success m-1' data-bs-toggle='modal' data-id='". $articulo->getCodArticulo() . "' data-bs-target='#modalComentarios'><i class='bi bi-chat'></i></a>";
+                                    echo "<a href='./vista/comentario/agregar_comentario.php?id=" . $articulo->getCodArticulo() . "' class='btn btn-warning m-1'><i class='bi bi-plus-circle'></i></a>";
                                 echo "</div>";
                                 echo "<div class='card-footer'>";
                                     echo "<small class='text-muted'>" . $articulo->getFechaCreacion() . "</small>";
@@ -84,39 +89,41 @@
         </div>
         </div>
 
+        <script>
+            $(document).ready(function() {
+                $('#modalComentarios').on('show.bs.modal', function (e) {
+                    var id = $(e.relatedTarget).data('id');
+                    $.ajax({
+                        type : 'post',
+                        url : 'componentes/tablaComentarios.php',
+                        data :  {'data-id': id},
+                        success : function(data){
+                        console.log(id);
+                        console.log(data);
+                        var tabla = '';
+                        
+                        data.forEach(element => {
+                            tabla += '<tr>';
+                            tabla += '<td>' + element.codComentario + '</td>';
+                            tabla += '<td>' + element.texto + '</td>';
+                            tabla += '<td>' + element.fechaCreacion + '</td>';
+                            tabla += '<td>' + element.likes + '</td>';
 
-        
+                            tabla += '<th>';
+                            tabla += '<a href="./vista/comentario/editar_comentario.php?id=' + element.codComentario + '" class="btn btn-primary m-1"><i class="bi bi-pencil-fill"></i></a>';
+                            tabla += '<a href="./vista/comentario/eliminar_comentario.php?id=' + element.codComentario + '" class="btn btn-danger m-1"><i class="bi bi-trash-fill"></i></a>';
+                            tabla += '</th>';
 
-            <script>
-                $(document).ready(function() {
-                    $('#modalComentarios').on('show.bs.modal', function (e) {
-                        var id = $(e.relatedTarget).data('id');
-                        $.ajax({
-                            type : 'post',
-                            url : 'componentes/tablaComentarios.php',
-                            data :  {'data-id': id},
-                            success : function(data){
-                            console.log(id);
-                            console.log(data);
-                            var tabla = '';
+                            tabla += '</tr>';
                             
-                            data.forEach(element => {
-                                tabla += '<tr>';
-                                tabla += '<td>' + element.codComentario + '</td>';
-                                tabla += '<td>' + element.texto + '</td>';
-                                tabla += '<td>' + element.fechaCreacion + '</td>';
-                                tabla += '<td>' + element.likes + '</td>';
-                                tabla += '<td><a href="./vista/comentario/editar_comentario.php?id=' + element.codComentario + '" class="btn btn-primary m-1"><i class="bi bi-pencil-fill"></i></a>';
-                                tabla += '</tr>';
-                            });
-                            
-                            $('#tablaComentarios').html(tabla);
-                            }
-
                         });
+                        
+                        $('#tablaComentarios').html(tabla);
+                        }
                     });
                 });
-            </script>
+            });
+        </script>
 
     </body>
 </html>

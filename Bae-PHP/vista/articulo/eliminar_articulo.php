@@ -7,7 +7,7 @@
 ?>
 
 <body>
-    <h1>Borrar Libro: </h1>
+    <h1>Borrar Articulo: </h1>
     <br>
 
     <?php

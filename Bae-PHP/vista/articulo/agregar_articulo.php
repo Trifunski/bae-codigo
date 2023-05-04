@@ -70,7 +70,7 @@
 
                     <br>
 
-                    <button type="submit" class="btn btn-primary">Crear Biblioteca</button>
+                    <button type="submit" class="btn btn-primary">Crear Articulo</button>
                 </form>
             </div>
             <br>

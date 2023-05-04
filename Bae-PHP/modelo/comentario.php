@@ -8,6 +8,7 @@ class Comentario {
         private $texto;
         private $fecha_creacion;
         private $likes;
+        private $cod_articulo;
 
         function __construct() {
             $bd = new bd();
@@ -39,15 +40,15 @@ class Comentario {
         public function obtenerComentario() {
             try {
 
-                $querySelect = "SELECT DISTINCT Cod_Comentario, Texto, fecha_creacion, Likes FROM comentarios WHERE Cod_Comentario = :id";
-                $comentario = $this->db->prepare($querySelect);
+                $querySelect = "SELECT * FROM comentarios WHERE cod_comentario = :cod_comentario";
+                $obtenerComentario = $this->db->prepare($querySelect);
 
-                $comentario->execute([
-                    'id' => $this->cod_comentario
-                ]);
+                $obtenerComentario->bindParam(":cod_comentario", $this->cod_comentario);
 
-                if($comentario){
-                    return $comentario->fetchObject('comentario');
+                $obtenerComentario->execute();
+
+                if($obtenerComentario){
+                    return $obtenerComentario->fetchAll(PDO::FETCH_CLASS, "comentario");
                 }else{
                     echo "Ocurrió un error inesperado al obtener el Comentario";
                 }
@@ -59,73 +60,74 @@ class Comentario {
         }
 
         public function agregarComentario() {
-            try {
+            try {                
+                $queryInsert = "INSERT INTO comentarios (texto, fecha_creacion, likes, cod_articulo) VALUES (:texto, :fecha_creacion, :likes, :cod_articulo)";
+                $insertarArticulo = $this->db->prepare($queryInsert);
 
-                $queryInsert = "INSERT INTO comentarios (Texto, fecha_creacion, Likes) VALUES (:texto, :fecha_creacion, :likes)";
-                $comentario = $this->db->prepare($queryInsert);
+                $insertarArticulo->bindParam(":texto", $this->texto);
+                $insertarArticulo->bindParam(":fecha_creacion", $this->fecha_creacion);
+                $insertarArticulo->bindParam(":likes", $this->likes);
+                $insertarArticulo->bindParam(":cod_articulo", $this->cod_articulo);
 
-                $comentario->execute([
-                    'texto' => $this->texto,
-                    'fecha_creacion' => $this->fecha_creacion,
-                    'likes' => $this->likes
-                ]);
+                $insertarArticulo->execute();
 
-                if($comentario){
-                    return true;
+                if($insertarArticulo){
+                    echo "Articulo agregado correctamente";
+                    header("Location:../../index.php");
                 }else{
-                    echo "Ocurrió un error inesperado al agregar el Comentario";
+                    echo "Ocurrió un error inesperado al agregar el Articulo";
                 }
                 
             } catch (Exception $ex){
                 echo "Ocurrió un error: " . $ex->getMessage();
-                return false;
             }
         }
 
         public function editarComentario() {
             try {
 
-                $queryUpdate = "UPDATE comentarios SET Texto = :texto, fecha_creacion = :fecha_creacion, Likes = :likes WHERE Cod_Comentario = :id";
-                $comentario = $this->db->prepare($queryUpdate);
+                $queryUpdate = "UPDATE comentarios SET texto = :texto, fecha_creacion = :fecha_creacion, likes = :likes, cod_articulo = :cod_articulo WHERE cod_comentario = :cod_comentario";
+                $editarComentario = $this->db->prepare($queryUpdate);
 
-                $comentario->execute([
-                    'id' => $this->cod_comentario,
-                    'texto' => $this->texto,
-                    'fecha_creacion' => $this->fecha_creacion,
-                    'likes' => $this->likes
-                ]);
+                $editarComentario->bindParam(":cod_comentario", $this->cod_comentario);
+                $editarComentario->bindParam(":texto", $this->texto);
+                $editarComentario->bindParam(":fecha_creacion", $this->fecha_creacion);
+                $editarComentario->bindParam(":likes", $this->likes);
+                $editarComentario->bindParam(":cod_articulo", $this->cod_articulo);
 
-                if($comentario){
-                    return true;
+                $editarComentario->execute();
+
+                if($editarComentario){
+                    echo "Comentario editado correctamente";
+                    header("Location:../../index.php");
                 }else{
                     echo "Ocurrió un error inesperado al editar el Comentario";
                 }
                 
             } catch (Exception $ex){
                 echo "Ocurrió un error: " . $ex->getMessage();
-                return false;
             }
         }
 
         public function eliminarComentario() {
             try {
 
-                $queryDelete = "DELETE FROM comentarios WHERE Cod_Comentario = :id";
-                $comentario = $this->db->prepare($queryDelete);
+                $queryDelete = "DELETE FROM comentarios WHERE cod_comentario = :cod_comentario";
+                $eliminarComentario = $this->db->prepare($queryDelete);
 
-                $comentario->execute([
-                    'id' => $this->cod_comentario
-                ]);
+                $eliminarComentario->bindParam(":cod_comentario", $this->cod_comentario);
 
-                if($comentario){
-                    return true;
+                $eliminarComentario->execute();
+
+                if($eliminarComentario){
+                    echo "Comentario eliminado correctamente";
+                    header("Location:../../index.php");
                 }else{
                     echo "Ocurrió un error inesperado al eliminar el Comentario";
                 }
                 
             } catch (Exception $ex){
                 echo "Ocurrió un error: " . $ex->getMessage();
-                return false;
             }
         }
 
@@ -145,6 +147,10 @@ class Comentario {
             return $this->likes;
         }
 
+        function getCodArticulo() {
+            return $this->cod_articulo;
+        }
+
         function setCodComentario($cod_comentario) {
             $this->cod_comentario = $cod_comentario;
         }
@@ -159,6 +165,10 @@ class Comentario {
 
         function setLikes($likes) {
             $this->likes = $likes;
+        }
+
+        function setCodArticulo($cod_articulo) {
+            $this->cod_articulo = $cod_articulo;
         }
 
 }
